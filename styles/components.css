@@ -402,21 +402,41 @@ progress::-webkit-progress-value { background: var(--primary-gradient); }
     gap: var(--spacing-sm);
 }
 
-/* NEW: Settings section styles */
+/* NEW: Enhanced settings section styles */
 .settings-actions {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
 }
-.settings-actions button {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-    padding: var(--spacing-md);
-    font-size: 1rem;
+
+.settings-group {
+    background-color: var(--bg-color-2);
+    border: 1px solid var(--bg-color-3);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    overflow: hidden; /* Prevent content from overflowing */
 }
+
+.settings-group h4 {
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--text-color-primary);
+    font-size: 1.125rem;
+}
+
+.settings-group p {
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--text-color-secondary);
+    font-size: 0.875rem;
+}
+
+.settings-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+}
+
 @media (min-width: 768px) {
-    .settings-actions {
+    .settings-buttons {
         grid-template-columns: 1fr 1fr;
     }
 }

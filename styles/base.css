@@ -197,6 +197,8 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.2s ease, color 0.2s ease;
+    transform-origin: top left;
+    transition: transform 0.2s ease;
 }
 
 /* Base element styling */
@@ -425,4 +427,66 @@ h6 { font-weight: 500; }
 [data-theme="midnight"] .card-list-item-button:not(.active) .card-list-item-bank,
 [data-theme="sunset"] .card-list-item-button:not(.active) .card-list-item-bank {
     color: var(--text-color-secondary);
+}
+
+/* NEW: Zoom functionality */
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background-color: var(--bg-color-1);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--bg-color-3);
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.zoom-controls label {
+    font-weight: 500;
+    color: var(--text-color-primary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.zoom-controls input[type="range"] {
+    flex: 1;
+    min-width: 120px; /* Reduced minimum width for mobile */
+}
+
+.zoom-value {
+    font-weight: 600;
+    color: var(--primary-500);
+    min-width: 40px; /* Reduced minimum width */
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.zoom-reset-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Mobile adjustments for zoom controls */
+@media (max-width: 480px) {
+    .zoom-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-sm);
+    }
+    
+    .zoom-controls input[type="range"] {
+        min-width: unset;
+        width: 100%;
+    }
+    
+    .zoom-value {
+        min-width: unset;
+        text-align: left;
+    }
+    
+    .zoom-reset-btn {
+        align-self: flex-start;
+    }
 }

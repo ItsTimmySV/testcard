@@ -209,6 +209,52 @@
 /* Modify this section to show panel footer on mobile */
 .panel-header { display: none; } /* Hide desktop panel header */
 
+/* NEW: Desktop Navigation Styles */
+.desktop-nav {
+    display: none; /* Hidden by default on mobile */
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--bg-color-3);
+}
+
+.desktop-nav-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+}
+
+.desktop-nav-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    border: none;
+    background: none;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-align: left;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.desktop-nav-btn:hover {
+    background-color: var(--bg-color-1);
+    color: var(--text-color-primary);
+}
+
+.desktop-nav-btn.active {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.desktop-nav-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
 /* Desktop Styles */
 @media (min-width: 992px) {
     #app-layout {
@@ -225,7 +271,7 @@
         padding-bottom: 0;
     }
     .main-content.container {
-        max-width: 900px;
+        max-width: 1000px; /* Increased max-width to better utilize space at lower zoom */
         padding: var(--spacing-xl);
     }
     
@@ -241,12 +287,26 @@
         align-items: center;
         gap: var(--spacing-md); /* Increased gap between buttons */
     }
-    .panel-footer { 
-        display: grid; /* Show footer in desktop sidebar */
-        position: static;
-        box-shadow: none;
-        padding: var(--spacing-md);
-        border-top: 1px solid var(--bg-color-3);
+    
+    /* Show desktop navigation */
+    .desktop-nav {
+        display: block;
     }
+    
+    /* Hide panel footer on desktop - import/export buttons should only be in settings */
+    .panel-footer { 
+        display: none;
+    }
+    
+    /* Hide card list container by default on desktop */
+    #sidebar-card-list-container {
+        display: none;
+    }
+    
+    /* Show card list container only when in cards view on desktop */
+    #app-layout[data-view="cards"] #sidebar-card-list-container {
+        display: block;
+    }
+    
     .mobile-header, #mobile-nav { display: none; }
 }
