@@ -823,8 +823,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const hasCards = cards.length > 0;
             document.getElementById('summary').classList.toggle('hidden', !hasCards);
             document.getElementById('payments-summary').classList.toggle('hidden', !hasCards);
-            const hasInstallments = document.getElementById('total-active-installments').textContent !== '0' && document.getElementById('total-active-installments').textContent !== '';
-            document.getElementById('installments-summary').classList.toggle('hidden', !hasCards || !hasInstallments);
+            
+            // Check for active installments in actual data instead of DOM
+            let hasActiveInstallments = false;
+            if (hasCards) {
+                cards.forEach(card => {
+                    card.transactions.forEach(tx => {
+                        if (tx.type === 'installment_purchase' && tx.paidMonths < tx.months) {
+                            hasActiveInstallments = true;
+                        }
+                    });
+                });
+            }
+            document.getElementById('installments-summary').classList.toggle('hidden', !hasCards || !hasActiveInstallments);
+            
             document.getElementById('card-detail-section').classList.toggle('hidden', !hasCards);
             noCardsMessage.classList.toggle('hidden', hasCards);
             selectCardMessage.classList.toggle('hidden', !hasCards || !!selectedCardId);
