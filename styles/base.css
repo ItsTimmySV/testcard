@@ -422,11 +422,12 @@ h6 { font-weight: 500; }
     color: var(--text-color-primary);
 }
 
-[data-theme="dark"] .card-list-item-button:not(.active) .card-list-item-bank,
-[data-theme="dracula"] .card-list-item-button:not(.active) .card-list-item-bank,
-[data-theme="midnight"] .card-list-item-button:not(.active) .card-list-item-bank,
-[data-theme="sunset"] .card-list-item-button:not(.active) .card-list-item-bank {
-    color: var(--text-color-secondary);
+/* NEW: Fix calendar day numbers in dark themes */
+[data-theme="dark"] .calendar-day-number,
+[data-theme="dracula"] .calendar-day-number,
+[data-theme="midnight"] .calendar-day-number,
+[data-theme="sunset"] .calendar-day-number {
+    color: var(--text-color-primary);
 }
 
 /* NEW: Zoom functionality */
