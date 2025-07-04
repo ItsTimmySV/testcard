@@ -96,7 +96,6 @@
     height: 20px; 
 }
 
-
 #main-content-panel {
     background-color: var(--bg-color-1);
     overflow-y: auto;
@@ -163,8 +162,15 @@
 }
 [data-theme="dark"] .mobile-nav-btn img { filter: invert(1); }
 
-.mobile-nav-btn.active { color: var(--primary-500); }
+.mobile-nav-btn svg {
+    width: 24px; 
+    height: 24px;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
 .mobile-nav-btn.active img { opacity: 1; }
+.mobile-nav-btn.active svg { opacity: 1; }
 
 .mobile-nav-fab {
     display: none; /* FAB is removed from nav */
