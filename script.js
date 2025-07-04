@@ -42,6 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileAddCardBtn = document.getElementById('mobile-add-card-btn');
     const mobileBackBtn = document.getElementById('mobile-back-btn'); // NEW
 
+    // NEW: Desktop Nav Elements
+    const desktopNavBtns = document.querySelectorAll('.desktop-nav-btn');
+
     // NEW Modal elements
     const transactionDetailModal = document.getElementById('transaction-detail-modal');
     const transactionDetailTableBody = document.getElementById('modal-transactions-table-body');
@@ -113,9 +116,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardListPanel = document.getElementById('card-list-panel');
     const mobileHeaderTitle = document.getElementById('mobile-header-title');
 
+    // NEW: Zoom control elements
+    const zoomSlider = document.getElementById('zoom-slider');
+    const zoomValue = document.getElementById('zoom-value');
+    const zoomResetBtn = document.getElementById('zoom-reset-btn');
+
     // State
     let cards = getCards();
     let budget = JSON.parse(localStorage.getItem('budget')) || null;
+    let zoomLevel = parseInt(localStorage.getItem('zoomLevel')) || (window.innerWidth >= 992 ? 85 : 100); // Default 85% for large screens
     let selectedCardId = cards.length > 0 ? cards[0].id : null; // New: Track selected card for detail view
     let previousMobileView = 'home'; // NEW: Track previous view for back button
 
@@ -158,10 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DATA MANIPULATION FUNCTIONS (passed as callbacks to modules) ---
     const handleImportSuccess = (importedData) => {
-        const { cards: importedCards, budget: importedBudget, theme: importedTheme } = importedData;
+        const { cards: importedCards, budget: importedBudget, theme: importedTheme, zoom: importedZoom } = importedData;
         
         cards = importedCards || [];
         budget = importedBudget || null;
+        
+        // Handle zoom import
+        if (typeof importedZoom === 'number') {
+            applyZoom(importedZoom);
+        }
         
         selectedCardId = cards.length > 0 ? cards[0].id : null;
         
@@ -533,9 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleCardSelection = (cardId) => {
         selectedCardId = cardId;
         updateUI();
-        if (window.innerWidth < 992) {
-            switchMobileView('home'); // Go to home view to see details
-        }
+        switchMobileView('home'); // Go to home view to see details on both mobile and desktop
     };
 
     // Callback to pass to render.js for opening transaction modal
@@ -786,6 +798,31 @@ document.addEventListener('DOMContentLoaded', () => {
         switchTransactionView('calendar');
     });
 
+    // NEW: Zoom functionality
+    const applyZoom = (level) => {
+        zoomLevel = level;
+        document.documentElement.style.fontSize = `${level}%`;
+        localStorage.setItem('zoomLevel', level);
+        if (zoomSlider) zoomSlider.value = level;
+        if (zoomValue) zoomValue.textContent = `${level}%`;
+    };
+
+    const setupZoomControls = () => {
+        if (!zoomSlider || !zoomValue || !zoomResetBtn) return;
+
+        zoomSlider.addEventListener('input', (e) => {
+            applyZoom(parseInt(e.target.value));
+        });
+
+        zoomResetBtn.addEventListener('click', () => {
+            const defaultZoom = window.innerWidth >= 992 ? 85 : 100;
+            applyZoom(defaultZoom);
+        });
+
+        // Initialize zoom
+        applyZoom(zoomLevel);
+    };
+
     // --- Mobile Navigation Logic ---
     const updateMobileHeader = () => {
         const view = appLayout.dataset.view;
@@ -859,12 +896,22 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileNavBtns.forEach(btn => {
             btn.classList.toggle('active', btn.dataset.view === view);
         });
+
+        // NEW: Update desktop nav buttons
+        desktopNavBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === view);
+        });
         
         updateMobileHeader();
         mainContentPanel.scrollTo(0, 0); // Scroll to top on view change
     };
 
     mobileNavBtns.forEach(btn => {
+        btn.addEventListener('click', () => switchMobileView(btn.dataset.view));
+    });
+
+    // NEW: Desktop nav event listeners
+    desktopNavBtns.forEach(btn => {
         btn.addEventListener('click', () => switchMobileView(btn.dataset.view));
     });
     
@@ -965,12 +1012,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // NEW: Setup theme selector modal
     setupThemeSelector(themeModal, themeSelectorContainer, [themeSwitcher, mobileThemeSwitcher]);
     
-    // NEW: Setup for both sets of import/export buttons
+    // NEW: Setup for both sets of import/export buttons with zoom support
     const getCardsRef = () => cards;
     const getBudgetRef = () => budget;
+    const getZoomRef = () => zoomLevel;
 
-    setupDataImportExport(exportBtnSidebar, importBtnSidebar, importFileSidebar, getCardsRef, getBudgetRef, handleImportSuccess);
-    setupDataImportExport(exportBtnSettings, importBtnSettings, importFileSettings, getCardsRef, getBudgetRef, handleImportSuccess);
+    setupDataImportExport(exportBtnSidebar, importBtnSidebar, importFileSidebar, getCardsRef, getBudgetRef, getZoomRef, handleImportSuccess);
+    setupDataImportExport(exportBtnSettings, importBtnSettings, importFileSettings, getCardsRef, getBudgetRef, getZoomRef, handleImportSuccess);
+
+    // NEW: Setup zoom controls
+    setupZoomControls();
 
     // Initial Render
     switchMobileView('home'); // Set initial view for mobile

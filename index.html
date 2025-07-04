@@ -23,6 +23,29 @@
                     <button id="theme-switcher" aria-label="Cambiar tema"></button>
                 </div>
             </div>
+            
+            <!-- NEW: Desktop Navigation -->
+            <nav class="desktop-nav">
+                <div class="desktop-nav-grid">
+                    <button id="desktop-home-btn" class="desktop-nav-btn active" data-view="home">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        Resumen
+                    </button>
+                    <button id="desktop-cards-btn" class="desktop-nav-btn" data-view="cards">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                        Tarjetas
+                    </button>
+                    <button id="desktop-budget-btn" class="desktop-nav-btn" data-view="budget">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57L23 6H6"/></svg>
+                        Presupuesto
+                    </button>
+                    <button id="desktop-settings-btn" class="desktop-nav-btn" data-view="settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-.73 2.73l-.22.38a2 2 0 0 0 2.73.73l.15.08a2 2 0 0 1 2 0l.43-.25a2 2 0 0 1 1-1.73V4a2 2 0 0 0 2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        Ajustes
+                    </button>
+                </div>
+            </nav>
+            
             <div id="sidebar-card-list-container">
                 <ul id="sidebar-card-list">
                     <!-- Card list items will be injected here -->
@@ -159,9 +182,28 @@
                 <section id="settings-section" class="hidden">
                      <div class="summary-section">
                         <div class="settings-actions">
-                             <button id="import-btn-settings" class="secondary">Importar Datos</button>
-                             <button id="export-btn-settings" class="secondary">Exportar Datos</button>
-                             <input type="file" id="import-file-settings" accept=".json" style="display: none;">
+                            <!-- NEW: Zoom Control Group -->
+                            <div class="settings-group">
+                                <h4>Tamaño de la Interfaz</h4>
+                                <p>Ajusta el tamaño de la interfaz para mejorar la legibilidad y el uso del espacio.</p>
+                                <div class="zoom-controls">
+                                    <label for="zoom-slider">Zoom:</label>
+                                    <input type="range" id="zoom-slider" min="60" max="120" step="5" value="100">
+                                    <span class="zoom-value" id="zoom-value">100%</span>
+                                    <button id="zoom-reset-btn" class="secondary zoom-reset-btn">Restablecer</button>
+                                </div>
+                            </div>
+
+                            <!-- Data Import/Export Group -->
+                            <div class="settings-group">
+                                <h4>Datos</h4>
+                                <p>Respalda tus datos o restaura desde un archivo de respaldo.</p>
+                                <div class="settings-buttons">
+                                    <button id="import-btn-settings" class="secondary">Importar Datos</button>
+                                    <button id="export-btn-settings" class="secondary">Exportar Datos</button>
+                                    <input type="file" id="import-file-settings" accept=".json" style="display: none;">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -195,7 +237,7 @@
                     <div class="section-header">
                         <h3 id="card-detail-title">Detalles de la Tarjeta</h3>
                         <button id="edit-card-btn" class="icon-button" aria-label="Editar Tarjeta">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4-14 14H4v-4L18 2z"></path><path d="M14.5 5.5 18.5 9.5"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4-14 14H4v-4L18 2z"></path><path d="M12 19 5 12 12 5"></path></svg>
                         </button>
                     </div>
                     <div id="cards-container"></div>
@@ -229,19 +271,19 @@
     <!-- Mobile Bottom Navigation -->
     <nav id="mobile-nav">
         <button id="mobile-home-btn" class="mobile-nav-btn active" data-view="home">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>Resumen</span>
         </button>
         <button id="mobile-cards-btn" class="mobile-nav-btn" data-view="cards">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
             <span>Tarjetas</span>
         </button>
         <button id="mobile-budget-btn" class="mobile-nav-btn" data-view="budget">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20m8-10a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"></path><path d="M8 10.5l3 3 5-5"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57L23 6H6"/></svg>
             <span>Presupuesto</span>
         </button>
         <button id="mobile-settings-btn" class="mobile-nav-btn" data-view="settings">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-.73 2.73l-.22.38a2 2 0 0 0 2.73.73l.15.08a2 2 0 0 1 2 0l.43-.25a2 2 0 0 1 1-1.73V4a2 2 0 0 0 2-2z"/><circle cx="12" cy="12" r="3"/></svg>
             <span>Ajustes</span>
         </button>
         <button id="mobile-add-card-btn" class="mobile-nav-fab" aria-label="Agregar Tarjeta">
@@ -476,6 +518,28 @@
                     </div>
                 </div>
             </div>
+            <footer class="modal-footer">
+                <button type="button" class="secondary" data-close-modal>Cerrar</button>
+            </footer>
+        </article>
+    </dialog>
+
+    <!-- NEW: Modal para ver las compras a plazo de una tarjeta -->
+    <dialog id="installment-detail-modal">
+        <article>
+            <header>
+                <h3 id="installment-detail-modal-title">Compras a Plazo de <span id="installment-card-alias"></span></h3>
+                <button aria-label="Close" class="close"></button>
+            </header>
+            <input type="hidden" id="installment-detail-card-id">
+            
+            <div class="modal-content-scroll">
+                <div id="modal-installments-list">
+                    <!-- Installment items will be injected here -->
+                </div>
+                <p id="no-installments-message-modal" class="empty-state hidden">No hay compras a plazo registradas para esta tarjeta.</p>
+            </div>
+            
             <footer class="modal-footer">
                 <button type="button" class="secondary" data-close-modal>Cerrar</button>
             </footer>

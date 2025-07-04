@@ -54,15 +54,17 @@ export const setupThemeSelector = (themeModal, themeContainer, themeSwitcherButt
     applyTheme(savedTheme);
 };
 
-export const setupDataImportExport = (exportBtn, importBtn, importFile, getCardsRef, getBudgetRef, onImportSuccess) => {
+export const setupDataImportExport = (exportBtn, importBtn, importFile, getCardsRef, getBudgetRef, getZoomRef, onImportSuccess) => {
     exportBtn.addEventListener('click', () => {
         const cards = getCardsRef();
         const budget = getBudgetRef();
+        const zoom = getZoomRef();
         const currentTheme = localStorage.getItem('theme') || 'light';
 
         const exportData = {
-            version: 2, // Add a version number for future migrations
+            version: 3, // Increment version for zoom support
             theme: currentTheme,
+            zoom: zoom,
             cards: cards,
             budget: budget,
         };
@@ -89,11 +91,11 @@ export const setupDataImportExport = (exportBtn, importBtn, importFile, getCards
             try {
                 const importedData = JSON.parse(event.target.result);
                 
-                // Check for new format { version, theme, cards, budget }
+                // Check for new format with zoom support
                 if (importedData && importedData.cards && Array.isArray(importedData.cards) && importedData.theme) {
-                     if(confirm('Esto reemplazará todos tus datos actuales (tarjetas, presupuesto y tema). ¿Estás seguro?')){
+                     if(confirm('Esto reemplazará todos tus datos actuales (tarjetas, presupuesto, tema y configuración de zoom). ¿Estás seguro?')){
                         applyTheme(importedData.theme);
-                        // The main script will handle updating state for cards and budget
+                        // The main script will handle updating state for cards, budget, and zoom
                         onImportSuccess(importedData); 
                         alert('¡Datos importados con éxito!');
                     }
@@ -102,7 +104,7 @@ export const setupDataImportExport = (exportBtn, importBtn, importFile, getCards
                 else if (Array.isArray(importedData)) {
                     if(confirm('Este es un archivo de respaldo antiguo. Esto reemplazará solo tus datos de tarjetas actuales. ¿Estás seguro?')){
                         // Pass a compliant object to the success handler
-                        onImportSuccess({ cards: importedData, budget: null, theme: localStorage.getItem('theme') || 'light' });
+                        onImportSuccess({ cards: importedData, budget: null, theme: localStorage.getItem('theme') || 'light', zoom: 100 });
                         alert('¡Datos de tarjetas importados con éxito!');
                     }
                 }
