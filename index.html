@@ -1,0 +1,568 @@
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+    <div id="app-layout">
+        <!-- Panel para la lista de tarjetas (Visible en Desktop, página separada en móvil) -->
+        <aside id="card-list-panel">
+            <div class="panel-header">
+                <h2>Mis Tarjetas</h2>
+                <div class="panel-header-actions">
+                    <button id="add-card-btn-sidebar" class="icon-button" aria-label="Agregar Nueva Tarjeta">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button id="theme-switcher" aria-label="Cambiar tema"></button>
+                </div>
+            </div>
+            <div id="sidebar-card-list-container">
+                <ul id="sidebar-card-list">
+                    <!-- Card list items will be injected here -->
+                </ul>
+            </div>
+             <div class="panel-footer">
+                <button id="import-btn-sidebar" class="secondary">Importar</button>
+                <button id="export-btn-sidebar" class="secondary">Exportar</button>
+                <input type="file" id="import-file-sidebar" accept=".json" style="display: none;">
+            </div>
+        </aside>
+
+        <!-- Contenedor principal de contenido (Resumen, Detalles de tarjeta) -->
+        <div id="main-content-panel">
+            <main class="main-content container">
+                <header class="mobile-header">
+                    <button id="mobile-back-btn" class="icon-button hidden" aria-label="Volver">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </button>
+                    <h1 id="mobile-header-title">Resumen</h1>
+                     <button id="mobile-theme-switcher" aria-label="Cambiar tema"></button>
+                </header>
+                
+                <!-- Resumen General -->
+                <section id="summary" class="summary-section">
+                    <div class="summary-header">
+                        <h3>Balance General</h3>
+                        <button id="toggle-general-summary" class="icon-button small" aria-label="Mostrar/Ocultar balance general" aria-expanded="true" aria-controls="general-summary-grid">
+                            <svg class="chevron-down" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                    </div>
+                    <div id="general-summary-grid" class="summary-grid">
+                        <div class="summary-item">
+                            <h6 class="secondary-text">Deuda Total</h6>
+                            <h4 id="total-debt">$0.00</h4>
+                        </div>
+                        <div class="summary-item">
+                            <h6 class="secondary-text">Disponible</h6>
+                            <h4 id="total-available">$0.00</h4>
+                        </div>
+                        <div class="summary-item">
+                            <h6 class="secondary-text">Límite Total</h6>
+                            <h4 id="total-limit">$0.00</h4>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Payments Summary -->
+                <section id="payments-summary" class="summary-section">
+                    <div class="summary-header">
+                        <h3>Resumen de Pagos</h3>
+                        <button id="toggle-payments-summary" class="icon-button small" aria-label="Mostrar/Ocultar resumen de pagos" aria-expanded="true" aria-controls="payments-summary-grid">
+                            <svg class="chevron-down" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                    </div>
+                    <div id="payments-summary-grid" class="summary-grid">
+                        <div class="summary-item">
+                            <h6 class="secondary-text">Pago del Periodo</h6>
+                            <h4 id="total-payment-for-period">$0.00</h4>
+                        </div>
+                        <div class="summary-item">
+                            <h6 class="secondary-text">Próximo Pago (Est.)</h6>
+                            <h4 id="total-next-payment">$0.00</h4>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NEW: Budget Section -->
+                <section id="budget-section" class="hidden">
+                    <div class="summary-section">
+                        <div class="summary-header">
+                            <h3>Presupuesto Mensual</h3>
+                        </div>
+                        <div id="budget-setup" class="hidden">
+                            <article class="empty-state">
+                                <img src="/icon-budget.png" alt="" class="empty-state-icon">
+                                <h3>Establece tu Presupuesto</h3>
+                                <p>Define un monto mensual para empezar a monitorear tus gastos contra tu objetivo.</p>
+                                <button id="setup-budget-btn" class="gradient-button">Configurar Presupuesto</button>
+                            </article>
+                        </div>
+
+                        <div id="budget-dashboard" class="hidden">
+                             <div class="budget-main-display">
+                                <small>Restante este mes</small>
+                                <strong id="budget-remaining-amount">$0.00</strong>
+                                <progress id="budget-progress" value="0" max="100"></progress>
+                                <div class="budget-progress-labels">
+                                    <span id="budget-spent-label">Gastado: $0.00</span>
+                                    <span id="budget-total-label">Total: $0.00</span>
+                                </div>
+                            </div>
+
+                            <div class="summary-grid budget-details-grid">
+                                <div class="summary-item">
+                                    <h6 class="secondary-text">Recomendado para hoy</h6>
+                                    <h4 id="budget-daily-recommendation">$0.00</h4>
+                                </div>
+                                <div class="summary-item">
+                                    <h6 class="secondary-text">Gastado hoy</h6>
+                                    <h4 id="budget-spent-today">$0.00</h4>
+                                </div>
+                                <div class="summary-item">
+                                    <h6 class="secondary-text">Días restantes</h6>
+                                    <h4 id="budget-days-remaining">0</h4>
+                                </div>
+                            </div>
+
+                            <div class="budget-expense-section">
+                                <div class="section-header">
+                                    <h4>Gastos del Mes</h4>
+                                    <button id="add-budget-expense-btn" class="gradient-button small">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        Agregar Gasto
+                                    </button>
+                                </div>
+                                <div id="budget-expense-list-container">
+                                    <!-- Expense items will be injected here -->
+                                </div>
+                                <article id="no-budget-expenses-message" class="empty-state hidden" style="padding: var(--spacing-md); border-style: dashed;">
+                                    <p style="margin: 0;">Aún no has registrado ningún gasto para este presupuesto.</p>
+                                </article>
+                            </div>
+                            
+                            <div class="budget-actions">
+                                <button id="edit-budget-btn" class="secondary">Editar Presupuesto</button>
+                                <button id="reset-budget-btn" class="secondary danger">Reiniciar Mes</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NEW: Settings Section -->
+                <section id="settings-section" class="hidden">
+                     <div class="summary-section">
+                        <div class="settings-actions">
+                             <button id="import-btn-settings" class="secondary">Importar Datos</button>
+                             <button id="export-btn-settings" class="secondary">Exportar Datos</button>
+                             <input type="file" id="import-file-settings" accept=".json" style="display: none;">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Installments Summary -->
+                <section id="installments-summary" class="summary-section hidden">
+                    <div class="summary-header">
+                        <h3>Resumen de Compras a Plazo</h3>
+                        <button id="toggle-installments-summary" class="icon-button small" aria-label="Mostrar/Ocultar resumen de compras a plazo" aria-expanded="false" aria-controls="installments-summary-grid">
+                            <svg class="chevron-down" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                    </div>
+                    <div id="installments-summary-grid" class="summary-grid hidden">
+                        <div class="summary-item">
+                            <h6 class="secondary-text">Deuda Restante</h6>
+                            <h4 id="total-installments-debt">$0.00</h4>
+                        </div>
+                        <div class="summary-item">
+                            <h6 class="secondary-text">Pago Mensual Total</h6>
+                            <h4 id="total-installments-monthly">$0.00</h4>
+                        </div>
+                        <div class="summary-item">
+                            <h6 class="secondary-text">Planes Activos</h6>
+                            <h4 id="total-active-installments">0</h4>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contenedor de Tarjetas (Ahora solo para la tarjeta seleccionada) -->
+                <section id="card-detail-section" class="card-detail-section">
+                    <div class="section-header">
+                        <h3 id="card-detail-title">Detalles de la Tarjeta</h3>
+                        <button id="edit-card-btn" class="icon-button" aria-label="Editar Tarjeta">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                    <div id="cards-container"></div>
+                </section>
+                
+                <!-- Mensajes de estado -->
+                <div id="no-cards-message" class="hidden">
+                    <article class="empty-state">
+                        <img src="/icon-cards.png" alt="" class="empty-state-icon">
+                        <h3>Empieza a Organizarte</h3>
+                        <p>Aún no has agregado ninguna tarjeta. ¡Toca el botón 'Agregar' para empezar!</p>
+                        <button id="add-card-from-empty-state" class="gradient-button">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Agregar Primera Tarjeta
+                        </button>
+                    </article>
+                </div>
+
+                <div id="select-card-message" class="hidden">
+                    <article class="empty-state">
+                         <img src="icon-cards.png" alt="" class="empty-state-icon">
+                         <h3>Selecciona una Tarjeta</h3>
+                        <p>Elige una tarjeta de la lista para ver todos sus detalles, movimientos y más.</p>
+                    </article>
+                </div>
+
+            </main>
+        </div>
+    </div>
+    
+    <!-- Mobile Bottom Navigation -->
+    <nav id="mobile-nav">
+        <button id="mobile-home-btn" class="mobile-nav-btn active" data-view="home">
+            <img src="icon-home.png" alt="Home">
+            <span>Resumen</span>
+        </button>
+        <button id="mobile-cards-btn" class="mobile-nav-btn" data-view="cards">
+            <img src="icon-cards.png" alt="Cards">
+            <span>Tarjetas</span>
+        </button>
+        <button id="mobile-budget-btn" class="mobile-nav-btn" data-view="budget">
+            <img src="/icon-budget.png" alt="Budget">
+            <span>Presupuesto</span>
+        </button>
+        <button id="mobile-settings-btn" class="mobile-nav-btn" data-view="settings">
+            <img src="/icon-settings.png" alt="Settings">
+            <span>Ajustes</span>
+        </button>
+        <button id="mobile-add-card-btn" class="mobile-nav-fab" aria-label="Agregar Tarjeta">
+            <img src="icon-add.png" alt="Add Card">
+        </button>
+    </nav>
+
+    <!-- Modal para agregar/editar tarjeta -->
+    <dialog id="card-modal">
+        <article>
+            <header>
+                <h3 id="card-modal-title">Agregar Nueva Tarjeta</h3>
+                <button aria-label="Close" class="close"></button>
+            </header>
+            <form id="card-form">
+                <input type="hidden" id="card-id">
+                <div class="form-group floating-label">
+                    <input type="text" id="alias" name="alias" placeholder=" " required>
+                    <label for="alias">Alias de la tarjeta</label>
+                </div>
+                
+                <div class="form-group floating-label">
+                    <input type="text" id="bank" name="bank" placeholder=" " required>
+                    <label for="bank">Banco</label>
+                </div>
+
+                <div class="grid">
+                    <div class="form-group floating-label">
+                        <input type="text" id="last4" name="last4" pattern="\d{4}" placeholder=" " required>
+                        <label for="last4">Últimos 4 dígitos</label>
+                    </div>
+                    <div class="form-group floating-label">
+                        <input type="number" id="limit" name="limit" step="any" placeholder=" " required>
+                        <label for="limit">Límite de crédito</label>
+                    </div>
+                </div>
+                
+                <div class="grid">
+                     <div class="form-group floating-label">
+                        <input type="number" id="cutoffDay" name="cutoffDay" min="1" max="31" placeholder=" " required>
+                        <label for="cutoffDay">Día de corte</label>
+                    </div>
+                     <div class="form-group floating-label">
+                        <input type="number" id="paymentDay" name="paymentDay" min="1" max="31" placeholder=" " required>
+                        <label for="paymentDay">Día de pago</label>
+                    </div>
+                </div>
+                <footer class="modal-footer">
+                    <button type="button" class="secondary" data-close-modal>Cancelar</button>
+                    <button type="submit" id="save-card-btn" class="gradient-button">Guardar Tarjeta</button>
+                </footer>
+            </form>
+        </article>
+    </dialog>
+
+    <!-- NEW: Modal para configurar presupuesto -->
+    <dialog id="budget-modal">
+        <article>
+            <header>
+                <h3 id="budget-modal-title">Configurar Presupuesto Mensual</h3>
+                <button aria-label="Close" class="close"></button>
+            </header>
+            <form id="budget-form">
+                <div class="form-group floating-label">
+                    <input type="number" id="budget-amount" name="budget-amount" step="any" min="0" placeholder=" " required>
+                    <label for="budget-amount">Monto total del presupuesto</label>
+                </div>
+                 <div class="form-group">
+                    <label>¿Qué hacer con el sobrante diario?</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="rollover-option" value="nextDay" checked>
+                            <span>Sumar al día siguiente</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="rollover-option" value="distribute">
+                            <span>Repartir en días restantes</span>
+                        </label>
+                    </div>
+                </div>
+
+                <footer class="modal-footer">
+                    <button type="button" class="secondary" data-close-modal>Cancelar</button>
+                    <button type="submit" id="save-budget-btn" class="gradient-button">Guardar</button>
+                </footer>
+            </form>
+        </article>
+    </dialog>
+
+    <!-- NEW: Modal para agregar gasto al presupuesto -->
+    <dialog id="budget-expense-modal">
+        <article>
+            <header>
+                <h3>Agregar Gasto al Presupuesto</h3>
+                <button aria-label="Close" class="close"></button>
+            </header>
+            <form id="budget-expense-form">
+                <input type="hidden" id="budget-expense-id">
+                <div class="form-group floating-label">
+                    <input type="text" id="budget-expense-description" name="description" placeholder=" " required>
+                    <label for="budget-expense-description">Descripción</label>
+                </div>
+                <div class="grid">
+                    <div class="form-group floating-label">
+                        <input type="number" id="budget-expense-amount" name="amount" step="0.01" min="0.01" placeholder=" " required>
+                        <label for="budget-expense-amount">Monto</label>
+                    </div>
+                    <div class="form-group floating-label">
+                        <input type="date" id="budget-expense-date" name="date" required>
+                        <label for="budget-expense-date">Fecha</label>
+                    </div>
+                </div>
+                <footer class="modal-footer">
+                    <button type="button" class="secondary" data-close-modal>Cancelar</button>
+                    <button type="submit" class="gradient-button">Guardar Gasto</button>
+                </footer>
+            </form>
+        </article>
+    </dialog>
+
+    <!-- Modal para agregar transacción -->
+    <dialog id="transaction-modal">
+        <article>
+            <header>
+                <h3>Agregar Movimiento</h3>
+                <button aria-label="Close" class="close"></button>
+            </header>
+            <form id="transaction-form">
+                <input type="hidden" id="transaction-card-id" name="transaction-card-id">
+                
+                <div class="form-group floating-label">
+                    <input type="text" id="description" name="description" placeholder=" " required>
+                    <label for="description">Descripción</label>
+                </div>
+
+                <div class="form-group floating-label">
+                    <input type="number" id="amount" name="amount" step="0.01" min="0.01" placeholder=" " required>
+                    <label for="amount">Monto</label>
+                </div>
+                
+                <div class="form-group floating-label">
+                    <input type="date" id="date" name="date" required>
+                    <label for="date">Fecha</label>
+                </div>
+
+                <div class="form-group floating-label">
+                    <select id="type" name="type" required>
+                        <option value="expense" selected>Gasto/Compra</option>
+                        <option value="payment">Pago a la tarjeta</option>
+                        <option value="installment">Compra a Meses</option>
+                    </select>
+                     <label for="type">Tipo de Movimiento</label>
+                </div>
+                
+                <div id="installments-group" class="hidden floating-label">
+                    <input type="number" id="months" name="months" min="2" max="48" placeholder=" ">
+                    <label for="months">Número de meses</label>
+                </div>
+
+                <footer class="modal-footer">
+                     <button type="button" class="secondary" data-close-modal>Cancelar</button>
+                    <button type="submit" class="gradient-button">Agregar</button>
+                </footer>
+            </form>
+        </article>
+    </dialog>
+
+    <!-- Modal para ver los movimientos de una tarjeta -->
+    <dialog id="transaction-detail-modal">
+        <article>
+            <header>
+                <h3 id="transaction-detail-modal-title">Movimientos de <span id="transaction-card-alias"></span></h3>
+                <button aria-label="Close" class="close"></button>
+            </header>
+            <input type="hidden" id="transaction-detail-card-id">
+            
+            <div class="view-toggle-container">
+                <button id="transaction-calendar-view-btn" class="view-toggle-btn active">Calendario</button>
+                <button id="transaction-list-view-btn" class="view-toggle-btn">Lista</button>
+            </div>
+
+            <div class="modal-content-scroll">
+                <div id="transaction-list-view" class="hidden">
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th class="align-right">Monto</th>
+                                <th class="align-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-transactions-table-body">
+                            <!-- Transactions will be injected here -->
+                        </tbody>
+                    </table>
+                    <p id="no-transactions-message" class="empty-state hidden">No hay movimientos registrados para esta tarjeta.</p>
+                </div>
+
+                <div id="transaction-calendar-view">
+                    <div class="calendar-header">
+                        <button id="calendar-prev-month" class="icon-button small">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <h4 id="calendar-month-year"></h4>
+                        <button id="calendar-next-month" class="icon-button small">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-day-header">Dom</div>
+                        <div class="calendar-day-header">Lun</div>
+                        <div class="calendar-day-header">Mar</div>
+                        <div class="calendar-day-header">Mié</div>
+                        <div class="calendar-day-header">Jue</div>
+                        <div class="calendar-day-header">Vie</div>
+                        <div class="calendar-day-header">Sáb</div>
+                        <!-- Calendar days will be injected here -->
+                    </div>
+                    <p id="no-transactions-calendar-message" class="empty-state hidden">No hay movimientos registrados para esta tarjeta.</p>
+                </div>
+
+                <div id="transaction-day-detail" class="hidden">
+                    <div class="day-detail-header">
+                        <button id="back-to-calendar" class="icon-button small">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <h4 id="day-detail-title">Movimientos del día</h4>
+                    </div>
+                    <div id="day-transactions-list">
+                        <!-- Day transactions will be injected here -->
+                    </div>
+                </div>
+            </div>
+            <footer class="modal-footer">
+                <button type="button" class="secondary" data-close-modal>Cerrar</button>
+            </footer>
+        </article>
+    </dialog>
+
+    <dialog id="theme-modal">
+        <article>
+            <header>
+                <h3>Elige un Tema</h3>
+                <button aria-label="Close" class="close"></button>
+            </header>
+            <div id="theme-selector-container" class="modal-content-scroll">
+                <!-- Theme options will be injected here by script.js -->
+            </div>
+            <footer class="modal-footer">
+                <button type="button" class="secondary" data-close-modal>Cerrar</button>
+            </footer>
+        </article>
+    </dialog>
+
+    <template id="card-template">
+        <article class="card">
+            <div class="card-body">
+                 <div class="card-main-info">
+                    <div class="card-balance">
+                        <small>Balance Actual</small>
+                        <strong data-id="currentBalance"></strong>
+                    </div>
+                     <div class="card-actions">
+                         <button class="icon-button" data-action="add-transaction" aria-label="Agregar Movimiento">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                         </button>
+                         <button class="icon-button danger" data-action="delete-card" aria-label="Eliminar Tarjeta">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="credit-usage">
+                    <div class="credit-usage-labels">
+                        <span><span class="dot available"></span> Disponible <strong data-id="availableCredit"></strong></span>
+                        <span>Límite <strong data-id="limit"></strong></span>
+                    </div>
+                    <progress data-id="credit-progress" value="0" max="100"></progress>
+                </div>
+               
+                <div class="card-details-grid">
+                    <div>
+                        <small>Pago para no gen. intereses</small>
+                        <p data-id="paymentForPeriod"></p>
+                    </div>
+                    <div>
+                        <small>Próximo Pago (Estimado)</small>
+                        <p data-id="nextPayment"></p>
+                    </div>
+                    <div>
+                        <small>Próximo Corte</small>
+                        <p data-id="nextCutoffDate"></p>
+                    </div>
+                    <div>
+                        <small>Fecha Límite de Pago</small>
+                        <p data-id="paymentDueDate"></p>
+                    </div>
+                </div>
+            </div>
+             <footer class="card-footer">
+                <button class="outline" data-action="view-transactions">Ver Movimientos</button>
+                <button class="outline" data-action="view-installments">Compras a Plazo</button>
+            </footer>
+        </article>
+    </template>
+
+    <template id="card-list-item-template">
+        <li class="card-list-item">
+            <button class="card-list-item-button">
+                <div class="card-list-item-info">
+                    <span class="card-list-item-alias" data-id="alias"></span>
+                    <span class="card-list-item-bank" data-id="bank-last4"></span>
+                </div>
+                <div class="card-list-item-balance">
+                    <span data-id="currentBalance"></span>
+                </div>
+            </button>
+        </li>
+    </template>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
