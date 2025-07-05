@@ -465,3 +465,31 @@ progress::-webkit-progress-value { background: var(--primary-gradient); }
 [data-theme="sunset"] {
     --color-danger-rgb: 255, 142, 142;
 }
+
+/* NEW: Desktop cards grid layout */
+.desktop-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.desktop-cards-grid .card-list-item {
+    list-style: none;
+}
+
+.desktop-cards-grid .card-list-item-button {
+    min-height: 80px;
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.desktop-cards-grid .card-list-item-alias {
+    font-size: 1rem;
+}
+
+.desktop-cards-grid .card-list-item-bank {
+    font-size: 0.875rem;
+}
+
+.desktop-cards-grid .card-list-item-balance {
+    font-size: 1rem;
+}

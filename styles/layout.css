@@ -303,10 +303,22 @@
         display: none;
     }
     
-    /* Show card list container only when in cards view on desktop */
+    /* Remove this rule - cards should only show in main content on desktop */
+    /* #app-layout[data-view="cards"] #sidebar-card-list-container {
+        display: block;
+    } */
+    
+    .mobile-header, #mobile-nav { display: none; }
+    
+    /* Hide mobile-only elements on desktop */
+    .mobile-only {
+        display: none !important;
+    }
+}
+
+/* Show card list container only when in cards view on mobile */
+@media (max-width: 991px) {
     #app-layout[data-view="cards"] #sidebar-card-list-container {
         display: block;
     }
-    
-    .mobile-header, #mobile-nav { display: none; }
 }
