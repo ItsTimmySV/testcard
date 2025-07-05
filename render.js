@@ -142,7 +142,7 @@ export const createInstallmentItemHtml = (inst, cardId) => {
 export const renderAppContent = (cards, selectedCardId, cardsContainer, sidebarCardListEl, cardTemplate, cardListItemTemplate, noCardsMessageEl, selectCardMessageEl, callbacks) => {
     const cardDetailTitle = document.getElementById('card-detail-title');
     
-    // 1. Render Card List
+    // 1. Render Card List (only for sidebar - desktop cards list is handled separately)
     sidebarCardListEl.innerHTML = '';
     cards.forEach(card => {
         const item = document.importNode(cardListItemTemplate.content, true);

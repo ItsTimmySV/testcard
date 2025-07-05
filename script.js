@@ -2,6 +2,7 @@ import { getCards, saveCards, formatCurrency, formatDate, setupModalClose } from
 import { renderAppContent, renderSummary, createTransactionRowHtml, createInstallmentItemHtml, setupTransactionActionListeners, setupInstallmentActionListeners, setupInstallmentDeleteActionListeners } from './render.js';
 import { setupCardModal, setupTransactionModal } from './modals.js';
 import { setupThemeSelector, setupDataImportExport } from './theme-import-export.js';
+import { calculateCardDetails } from './calculations.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
@@ -44,6 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // NEW: Desktop Nav Elements
     const desktopNavBtns = document.querySelectorAll('.desktop-nav-btn');
+
+    // NEW: Desktop cards list elements
+    const desktopCardsListSection = document.getElementById('desktop-cards-list-section');
+    const desktopCardsGrid = document.getElementById('desktop-cards-grid');
+    const desktopNoCardsMessage = document.getElementById('desktop-no-cards-message');
+    const addCardBtnDesktopList = document.getElementById('add-card-btn-desktop-list');
+    const addCardFromDesktopEmptyState = document.getElementById('add-card-from-desktop-empty-state');
 
     // NEW Modal elements
     const transactionDetailModal = document.getElementById('transaction-detail-modal');
@@ -854,6 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('select-card-message').classList.add('hidden');
         budgetSection.classList.add('hidden');
         settingsSection.classList.add('hidden');
+        desktopCardsListSection.classList.add('hidden');
         
         // Show the correct section based on the view
         if (view === 'home') {
@@ -878,7 +887,12 @@ document.addEventListener('DOMContentLoaded', () => {
             noCardsMessage.classList.toggle('hidden', hasCards);
             selectCardMessage.classList.toggle('hidden', !hasCards || !!selectedCardId);
         } else if (view === 'cards') {
-            // This view is handled by the app-layout data attribute in CSS
+            // On desktop, show the desktop cards list in main content
+            if (window.innerWidth >= 992) {
+                desktopCardsListSection.classList.remove('hidden');
+                renderDesktopCardsList();
+            }
+            // This view is handled by the app-layout data attribute in CSS for mobile
             // Explicitly ensure installments summary stays hidden
             document.getElementById('installments-summary').classList.add('hidden');
         } else if (view === 'budget') {
@@ -906,6 +920,37 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentPanel.scrollTo(0, 0); // Scroll to top on view change
     };
 
+    // NEW: Function to render desktop cards list
+    const renderDesktopCardsList = () => {
+        const hasCards = cards.length > 0;
+        
+        desktopNoCardsMessage.classList.toggle('hidden', hasCards);
+        desktopCardsGrid.style.display = hasCards ? '' : 'none';
+        
+        if (hasCards) {
+            desktopCardsGrid.innerHTML = '';
+            cards.forEach(card => {
+                const item = document.importNode(cardListItemTemplate.content, true);
+                const details = calculateCardDetails(card);
+                
+                item.querySelector('.card-list-item').dataset.cardId = card.id;
+                if (card.id === selectedCardId) {
+                    item.querySelector('.card-list-item-button').classList.add('active');
+                }
+                item.querySelector('[data-id="alias"]').textContent = card.alias;
+                item.querySelector('[data-id="bank-last4"]').textContent = `${card.bank} - ${card.last4}`;
+                item.querySelector('[data-id="currentBalance"]').textContent = formatCurrency(details.currentBalance);
+                
+                // Add click listener for card selection
+                item.querySelector('.card-list-item-button').addEventListener('click', () => {
+                    handleCardSelection(card.id);
+                });
+                
+                desktopCardsGrid.appendChild(item);
+            });
+        }
+    };
+
     mobileNavBtns.forEach(btn => {
         btn.addEventListener('click', () => switchMobileView(btn.dataset.view));
     });
@@ -928,9 +973,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    mobileAddCardBtn?.addEventListener('click', () => {
+    // NEW: Desktop cards list event listeners
+    addCardBtnDesktopList?.addEventListener('click', () => {
         if (openCardModalCallback) {
-            openCardModalCallback(); // Open 'add card' modal
+            openCardModalCallback();
+        }
+    });
+
+    addCardFromDesktopEmptyState?.addEventListener('click', () => {
+        if (openCardModalCallback) {
+            openCardModalCallback();
         }
     });
 
@@ -953,13 +1005,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModalClose(budgetExpenseModal); // NEW
 
     // Event listeners for new UI elements
-    addCardBtnSidebar.addEventListener('click', () => {
+    addCardBtnSidebar?.addEventListener('click', () => {
         if (openCardModalCallback) {
             openCardModalCallback(); // Directly call the stored callback to open the modal
         }
     });
 
-    editCardBtn.addEventListener('click', () => {
+    editCardBtn?.addEventListener('click', () => {
         if (openCardModalCallback) {
             const selectedCard = cards.find(c => c.id === selectedCardId);
             if (selectedCard) {
@@ -969,28 +1021,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // NEW: Budget event listeners
-    setupBudgetBtn.addEventListener('click', () => budgetModal.showModal());
-    editBudgetBtn.addEventListener('click', () => {
+    setupBudgetBtn?.addEventListener('click', () => budgetModal.showModal());
+    editBudgetBtn?.addEventListener('click', () => {
         document.getElementById('budget-amount').value = budget.totalAmount;
         document.querySelector(`input[name="rollover-option"][value="${budget.rolloverOption}"]`).checked = true;
         budgetModal.showModal();
     });
-    resetBudgetBtn.addEventListener('click', () => {
+    resetBudgetBtn?.addEventListener('click', () => {
         if (confirm('¿Estás seguro de que quieres reiniciar el presupuesto para el mes actual? Se conservará el monto total y se borrarán los gastos registrados.')) {
             budget.startDate = new Date().toISOString().split('T')[0];
             budget.expenses = [];
             updateUI();
         }
     });
-    budgetForm.addEventListener('submit', handleSaveBudget);
+    budgetForm?.addEventListener('submit', handleSaveBudget);
 
     // NEW: Budget Expense Listeners
-    addBudgetExpenseBtn.addEventListener('click', () => {
+    addBudgetExpenseBtn?.addEventListener('click', () => {
         budgetExpenseForm.reset();
         document.getElementById('budget-expense-date').value = new Date().toISOString().split('T')[0];
         budgetExpenseModal.showModal();
     });
-    budgetExpenseForm.addEventListener('submit', handleSaveBudgetExpense);
+    budgetExpenseForm?.addEventListener('submit', handleSaveBudgetExpense);
 
     // NEW: Add event listener for modal close buttons
     document.querySelectorAll('dialog').forEach(modal => {
