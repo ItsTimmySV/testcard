@@ -9,6 +9,19 @@ export const saveCards = (cards) => localStorage.setItem('cards', JSON.stringify
 
 export const getCards = () => JSON.parse(localStorage.getItem('cards')) || [];
 
+// NEW: UUID generator with fallback for compatibility
+export const generateUUID = () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+    // Fallback UUID generator
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
+
 // NEW: Utility to set up modal close listeners
 export const setupModalClose = (modalElement) => {
     if (!modalElement) return; // Add null check

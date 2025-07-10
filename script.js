@@ -1,4 +1,4 @@
-import { getCards, saveCards, formatCurrency, formatDate, setupModalClose } from './utils.js';
+import { getCards, saveCards, formatCurrency, formatDate, setupModalClose, generateUUID } from './utils.js';
 import { renderAppContent, renderSummary, createTransactionRowHtml, createInstallmentItemHtml, setupTransactionActionListeners, setupInstallmentActionListeners, setupInstallmentDeleteActionListeners } from './render.js';
 import { setupCardModal, setupTransactionModal } from './modals.js';
 import { setupThemeSelector, setupDataImportExport } from './theme-import-export.js';
@@ -195,13 +195,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleSaveCard = (newCardData, type) => {
         if (type === 'new') {
             const newId = String(Date.now());
-            cards.push({ ...newCardData, id: newId, transactions: [] });
+            const newCard = { 
+                ...newCardData, 
+                id: newId, 
+                transactions: [],
+                hasCashback: newCardData.hasCashback || false,
+                cashbackPercentage: newCardData.cashbackPercentage || 0
+            };
+            cards.push(newCard);
             selectedCardId = newId; // Select the newly added card
         } else {
             // Find and update existing card data
             const index = cards.findIndex(c => c.id === newCardData.id);
             if (index !== -1) {
-                cards[index] = { ...cards[index], ...newCardData };
+                cards[index] = { 
+                    ...cards[index], 
+                    ...newCardData,
+                    hasCashback: newCardData.hasCashback || false,
+                    cashbackPercentage: newCardData.cashbackPercentage || 0
+                };
                 selectedCardId = newCardData.id; // Ensure the edited card remains selected
             }
         }
@@ -291,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Add a new 'payment' transaction to the card's general transaction list
             const paymentTx = {
-                id: crypto.randomUUID(), // Unique ID
+                id: generateUUID(), // Use our compatible UUID generator
                 type: 'payment',
                 date: paymentDateStr, // Use user-provided date
                 description: `Pago MSI: ${installment.description} (${installment.paidMonths}/${installment.months})`,
@@ -534,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const formData = new FormData(budgetExpenseForm);
         const newExpense = {
-            id: crypto.randomUUID(),
+            id: generateUUID(), // Use our compatible UUID generator
             description: formData.get('description'),
             amount: parseFloat(formData.get('amount')),
             date: formData.get('date'),

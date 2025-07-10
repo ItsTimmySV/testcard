@@ -1,11 +1,31 @@
 // This module contains logic for handling card and transaction modals and forms.
 
+import { generateUUID } from './utils.js';
+
 export const setupCardModal = (cardModal, cardForm, onSaveCard, setAddCardModalCallback) => {
+    const hasCashbackCheckbox = document.getElementById('hasCashback');
+    const cashbackPercentageGroup = document.getElementById('cashback-percentage-group');
+
+    // Toggle cashback percentage field visibility
+    hasCashbackCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            cashbackPercentageGroup.classList.remove('hidden');
+        } else {
+            cashbackPercentageGroup.classList.add('hidden');
+            document.getElementById('cashbackPercentage').value = '';
+        }
+    });
+
     // Function to open the card modal and reset the form
     const openCardModal = (cardData = null) => {
         cardForm.reset();
         document.getElementById('card-modal-title').textContent = 'Agregar Nueva Tarjeta';
         document.getElementById('card-id').value = ''; // Clear for new card
+        
+        // Reset cashback fields
+        hasCashbackCheckbox.checked = false;
+        cashbackPercentageGroup.classList.add('hidden');
+        document.getElementById('cashbackPercentage').value = '';
 
         if (cardData) {
             // Populate form for editing
@@ -17,6 +37,13 @@ export const setupCardModal = (cardModal, cardForm, onSaveCard, setAddCardModalC
             document.getElementById('limit').value = cardData.limit;
             document.getElementById('cutoffDay').value = cardData.cutoffDay;
             document.getElementById('paymentDay').value = cardData.paymentDay;
+            
+            // Populate cashback fields
+            if (cardData.hasCashback) {
+                hasCashbackCheckbox.checked = true;
+                cashbackPercentageGroup.classList.remove('hidden');
+                document.getElementById('cashbackPercentage').value = cardData.cashbackPercentage || '';
+            }
         }
         cardModal.showModal();
     };
@@ -36,6 +63,9 @@ export const setupCardModal = (cardModal, cardForm, onSaveCard, setAddCardModalC
         e.preventDefault();
         const formData = new FormData(cardForm);
         const cardId = formData.get('card-id'); // This will be empty for new cards
+        
+        const hasCashback = formData.get('hasCashback') === 'on';
+        const cashbackPercentage = hasCashback ? parseFloat(formData.get('cashbackPercentage')) || 0 : 0;
 
         const cardData = {
             id: cardId, // Will be empty for new cards, main script will assign
@@ -45,6 +75,8 @@ export const setupCardModal = (cardModal, cardForm, onSaveCard, setAddCardModalC
             limit: parseFloat(formData.get('limit')),
             cutoffDay: parseInt(formData.get('cutoffDay')),
             paymentDay: parseInt(formData.get('paymentDay')),
+            hasCashback: hasCashback,
+            cashbackPercentage: cashbackPercentage,
             // Transactions array is initialized in main script
         };
 
@@ -98,7 +130,7 @@ export const setupTransactionModal = (transactionModal, transactionForm, install
             const monthlyPayment = amount / months;
             
             transactionData = {
-                id: crypto.randomUUID(), // Use crypto.randomUUID() for robust unique IDs
+                id: generateUUID(), // Use our compatible UUID generator
                 type: 'installment_purchase', // New type for the original purchase
                 date: date,
                 description: description,
@@ -110,7 +142,7 @@ export const setupTransactionModal = (transactionModal, transactionForm, install
             };
         } else {
              transactionData = {
-                id: crypto.randomUUID(), // Use crypto.randomUUID() for robust unique IDs
+                id: generateUUID(), // Use our compatible UUID generator
                 type: type,
                 date: date,
                 description: description,

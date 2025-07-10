@@ -191,6 +191,19 @@ export const renderAppContent = (cards, selectedCardId, cardsContainer, sidebarC
         cardElement.querySelector('[data-id="nextCutoffDate"]').textContent = details.nextCutoffDate;
         cardElement.querySelector('[data-id="paymentDueDate"]').textContent = details.paymentDueDate;
 
+        // Handle cashback display
+        const cardDetailsGrid = cardElement.querySelector('[data-id="card-details-grid"]');
+        const cashbackItem = cardElement.querySelector('[data-id="cashback-item"]');
+        
+        if (selectedCard.hasCashback && selectedCard.cashbackPercentage > 0) {
+            cardDetailsGrid.classList.add('has-cashback');
+            cashbackItem.classList.remove('hidden');
+            cardElement.querySelector('[data-id="accumulatedCashback"]').textContent = formatCurrency(details.accumulatedCashback);
+        } else {
+            cardDetailsGrid.classList.remove('has-cashback');
+            cashbackItem.classList.add('hidden');
+        }
+
         cardsContainer.appendChild(cardElement);
     } else {
         cardDetailTitle.textContent = "Detalles de la Tarjeta";
