@@ -5,6 +5,65 @@ import { setupThemeSelector, setupDataImportExport } from './theme-import-export
 import { calculateCardDetails } from './calculations.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('SW registered: ', registration);
+                })
+                .catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+        });
+    }
+
+    // PWA Install Prompt
+    let deferredPrompt;
+    const installBanner = document.getElementById('install-banner');
+    const installBtn = document.getElementById('install-app-btn');
+    const dismissBtn = document.getElementById('dismiss-install-btn');
+
+    // Listen for beforeinstallprompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        // Show install banner if not dismissed
+        if (!localStorage.getItem('installBannerDismissed')) {
+            installBanner.classList.remove('hidden');
+        }
+    });
+
+    // Install button click handler
+    installBtn.addEventListener('click', () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the A2HS prompt');
+                    installBanner.classList.add('hidden');
+                } else {
+                    console.log('User dismissed the A2HS prompt');
+                }
+                deferredPrompt = null;
+            });
+        }
+    });
+
+    // Dismiss button click handler
+    dismissBtn.addEventListener('click', () => {
+        installBanner.classList.add('hidden');
+        localStorage.setItem('installBannerDismissed', 'true');
+    });
+
+    // Listen for app installed event
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        installBanner.classList.add('hidden');
+    });
+
     // DOM Elements
     const body = document.body;
     const cardModal = document.getElementById('card-modal');

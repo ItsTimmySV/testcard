@@ -8,9 +8,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#4f46e5">
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Credit Tracker">
+    <link rel="apple-touch-icon" href="icon-home.png">
 </head>
 <body>
+    <!-- PWA Install Banner -->
+    <div id="install-banner" class="install-banner hidden">
+        <div class="install-banner-content">
+            <div class="install-banner-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </div>
+            <div class="install-banner-text">
+                <h4>¡Instala Credit Tracker!</h4>
+                <p>Agrega esta app a tu dispositivo para un acceso más rápido y una mejor experiencia.</p>
+            </div>
+            <div class="install-banner-actions">
+                <button id="install-app-btn" class="gradient-button">Instalar</button>
+                <button id="dismiss-install-btn" class="secondary small">Ahora no</button>
+            </div>
+        </div>
+    </div>
+
     <div id="app-layout">
         <!-- Panel para la lista de tarjetas (Visible en Desktop, página separada en móvil) -->
         <aside id="card-list-panel">
