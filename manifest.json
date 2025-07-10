@@ -1,6 +1,6 @@
 {
-  "name": "Credit Card Tracker",
-  "short_name": "CreditTracker",
+  "name": "Mis tarjetas",
+  "short_name": "Mis tarjetas",
   "start_url": "/testcard/",
   "display": "standalone",
   "orientation": "portrait-primary",
