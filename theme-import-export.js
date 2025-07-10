@@ -17,6 +17,13 @@ const applyTheme = (themeName) => {
     const selectedTheme = themes.find(t => t.name === themeName) || themes[0];
     document.documentElement.setAttribute('data-theme', selectedTheme.name);
     localStorage.setItem('theme', selectedTheme.name);
+    
+    // Update theme-color meta tag for PWA status bar
+    const themeColorMeta = document.getElementById('theme-color-meta');
+    if (themeColorMeta) {
+        themeColorMeta.setAttribute('content', selectedTheme.colors[1]); // Use primary color
+    }
+    
     document.dispatchEvent(new CustomEvent('themechange'));
 };
 
