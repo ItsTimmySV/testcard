@@ -4,13 +4,13 @@ const themes = [
     // Light Themes
     { name: 'light', displayName: 'Claro', colors: ['#f3f4f6', '#4f46e5', '#16a34a'] },
     { name: 'mint', displayName: 'Menta', colors: ['#f0fdfa', '#0d9488', '#16a34a'] },
-    { name: 'latte', displayName: 'Latte', colors: ['#fff', '#a47551', '#556b2f'] },
-    { name: 'rose', displayName: 'Rosé', colors: ['#fff', '#e11d48', '#16a34a'] },
+    { name: 'latte', displayName: 'Latte', colors: ['#fefbf6', '#a47551', '#556b2f'] },
+    { name: 'rose', displayName: 'Rosé', colors: ['#fdf2f8', '#e11d48', '#16a34a'] },
     // Dark Themes
-    { name: 'dark', displayName: 'Oscuro', colors: ['#1f2937', '#4f46e5', '#4ade80'] },
+    { name: 'dark', displayName: 'Oscuro', colors: ['#111827', '#4f46e5', '#4ade80'] },
     { name: 'midnight', displayName: 'Medianoche', colors: ['#161b22', '#58a6ff', '#56d364'] },
-    { name: 'sunset', displayName: 'Atardecer', colors: ['#423254', '#ff9a8b', '#78e8c8'] },
-    { name: 'dracula', displayName: 'Drácula', colors: ['#44475a', '#ff79c6', '#50fa7b'] }
+    { name: 'sunset', displayName: 'Atardecer', colors: ['#2c2138', '#ff9a8b', '#78e8c8'] },
+    { name: 'dracula', displayName: 'Drácula', colors: ['#282a36', '#ff79c6', '#50fa7b'] }
 ];
 
 const applyTheme = (themeName) => {
@@ -21,7 +21,11 @@ const applyTheme = (themeName) => {
     // Update theme-color meta tag for PWA status bar
     const themeColorMeta = document.getElementById('theme-color-meta');
     if (themeColorMeta) {
-        themeColorMeta.setAttribute('content', selectedTheme.colors[1]); // Use primary color
+        const primaryColor = selectedTheme.colors[1]; // Use primary color
+        themeColorMeta.setAttribute('content', primaryColor);
+        // Force browser to recognize the change
+        themeColorMeta.remove();
+        document.head.appendChild(themeColorMeta);
     }
     
     document.dispatchEvent(new CustomEvent('themechange'));

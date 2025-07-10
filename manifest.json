@@ -1,7 +1,7 @@
 {
   "name": "Credit Card Tracker",
   "short_name": "CreditTracker",
-  "start_url": "/testcard/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#f3f4f6",
