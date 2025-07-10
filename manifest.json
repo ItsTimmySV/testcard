@@ -1,6 +1,6 @@
 {
-  "name": "Mis tarjetas",
-  "short_name": "Mis tarjetas",
+  "name": "Mis Tarjetas",
+  "short_name": "Mis Tarjetas",
   "start_url": "/testcard/",
   "display": "standalone",
   "orientation": "portrait-primary",
