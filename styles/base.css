@@ -491,3 +491,39 @@ h6 { font-weight: 500; }
         align-self: flex-start;
     }
 }
+
+/* NEW: Checkbox styles */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    margin: 0;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+    background-color: var(--bg-color-1);
+    border: 1px solid var(--bg-color-3);
+    transition: background-color 0.2s ease;
+}
+
+.checkbox-container:hover {
+    background-color: var(--bg-color-2);
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    accent-color: var(--primary-500);
+}
+
+.checkbox-label {
+    font-weight: 500;
+    color: var(--text-color-primary);
+    flex: 1;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}

@@ -183,14 +183,31 @@ progress::-webkit-progress-value { background: var(--primary-gradient); }
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-lg) var(--spacing-md);
 }
-.card-details-grid small {
-     color: var(--text-color-secondary);
-     font-size: 0.875rem;
+
+.card-details-grid.has-cashback {
+    grid-template-columns: 1fr 1fr 1fr;
 }
-.card-details-grid p {
+
+.card-details-grid.has-cashback .cashback-item {
+    grid-column: span 3;
+    background-color: var(--bg-color-1);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--bg-color-3);
+    text-align: center;
+}
+
+.card-details-grid.has-cashback .cashback-item small {
+    color: var(--color-success);
     font-weight: 600;
-    font-size: 1rem;
 }
+
+.card-details-grid.has-cashback .cashback-item p {
+    color: var(--color-success);
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
 .card-footer {
     display: flex;
     gap: var(--spacing-sm);
