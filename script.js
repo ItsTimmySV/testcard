@@ -907,7 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const view = appLayout.dataset.view;
         const hasCards = cards.length > 0;
         if (view === 'home') {
-            mobileHeaderTitle.textContent = hasCards ? 'Resumen' : 'Credit Tracker';
+            mobileHeaderTitle.textContent = hasCards ? 'Resumen' : 'Mis Tarjetas';
             mobileBackBtn.classList.add('hidden');
         } else if (view === 'cards') {
             mobileHeaderTitle.textContent = 'Mis Tarjetas';
