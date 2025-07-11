@@ -3,20 +3,20 @@
   "short_name": "Mis Tarjetas",
   "start_url": "/testcard/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#f3f4f6",
   "theme_color": "#4f46e5",
   "description": "Una aplicación simple para rastrear gastos y pagos de tarjetas de crédito",
   "categories": ["finance", "productivity"],
   "icons": [
     {
-      "src": "icon-home.png",
+      "src": "icon-cards.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-home.png",
+      "src": "icon-cards.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -24,7 +24,7 @@
   ],
   "screenshots": [
     {
-      "src": "icon-home.png",
+      "src": "icon-cards.png",
       "sizes": "640x1136",
       "type": "image/png",
       "form_factor": "narrow"
