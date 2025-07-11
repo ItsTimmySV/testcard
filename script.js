@@ -187,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const zoomSlider = document.getElementById('zoom-slider');
     const zoomValue = document.getElementById('zoom-value');
     const zoomResetBtn = document.getElementById('zoom-reset-btn');
+    const forceUpdateBtn = document.getElementById('force-update-btn');
 
     // State
     let cards = getCards();
@@ -902,6 +903,42 @@ document.addEventListener('DOMContentLoaded', () => {
         applyZoom(zoomLevel);
     };
 
+    // NEW: Force update functionality
+    const handleForceUpdate = async () => {
+        if (!confirm('¿Estás seguro de que quieres forzar la actualización? La aplicación se recargará automáticamente.')) {
+            return;
+        }
+
+        try {
+            // Show loading state
+            forceUpdateBtn.disabled = true;
+            forceUpdateBtn.textContent = 'Actualizando...';
+
+            // Clear all caches
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            }
+
+            // Unregister and re-register service worker
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(registrations.map(registration => registration.unregister()));
+                
+                // Re-register the service worker
+                await navigator.serviceWorker.register('./sw.js');
+            }
+
+            // Force reload the page
+            window.location.reload(true);
+        } catch (error) {
+            console.error('Error during force update:', error);
+            alert('Error al actualizar. Por favor, recarga la página manualmente.');
+            forceUpdateBtn.disabled = false;
+            forceUpdateBtn.textContent = 'Actualizar Ahora';
+        }
+    };
+
     // --- Mobile Navigation Logic ---
     const updateMobileHeader = () => {
         const view = appLayout.dataset.view;
@@ -1123,6 +1160,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // NEW: Force update button event listener
+    forceUpdateBtn?.addEventListener('click', handleForceUpdate);
 
     // --- INITIALIZE MODULES ---
     setupCardModal(cardModal, cardForm, handleSaveCard, (callback) => {
